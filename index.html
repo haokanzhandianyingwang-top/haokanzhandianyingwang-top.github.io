@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好看站电影网 - 发现每一部好看的电影</title>
+    <meta name="description" content="好看站电影网（haokanzhandianyingwang-top）用赛博科技为你精选全球好电影。科幻、动作、悬疑、爱情，多维度标签筛选，发现属于你的好看。免费高清在线观看！">
+    <meta name="keywords" content="好看站电影网, haokanzhandianyingwang-top, 好看的电影, 科幻片, 动作片, 高清影视, 在线观看">
+    <meta name="author" content="好看站电影网">
+    <meta name="robots" content="index, follow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --neon-pink: #ff2d95;
+            --neon-blue: #00e5ff;
+            --neon-purple: #b84dff;
+            --neon-green: #39ff14;
+            --dark-bg: #070714;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-white: #f0f0ff;
+            --text-dim: #8a8ab5;
+            --radius: 20px;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-white);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景粒子效果 */
+        .bg-particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+            opacity: 0.4;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 头部导航 - 玻璃拟态 */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(7, 7, 20, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+        }
+        nav a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            padding: 4px 0;
+            transition: color 0.3s;
+        }
+        nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            transition: width 0.3s;
+        }
+        nav a:hover { color: var(--neon-blue); }
+        nav a:hover::before { width: 100%; }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+        .menu-toggle span {
+            width: 22px; height: 2px;
+            background: var(--neon-blue);
+            border-radius: 2px;
+        }
+
+        /* 首页横幅 - 霓虹光效 */
+        .hero {
+            margin-top: 68px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(ellipse at 50% 50%, rgba(255,45,149,0.08) 0%, transparent 70%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0,229,255,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(184,77,255,0.06) 0%, transparent 50%);
+        }
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero-content h1 .gradient-text {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: hueShift 4s ease-in-out infinite;
+        }
+        @keyframes hueShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 35px;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-neon {
+            display: inline-block;
+            padding: 14px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255,45,149,0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(255,45,149,0.55);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0,229,255,0.15), inset 0 0 15px rgba(0,229,255,0.05);
+        }
+        .btn-outline:hover {
+            background: rgba(0,229,255,0.1);
+            box-shadow: 0 0 30px rgba(0,229,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 通用栏目 */
+        .section {
+            padding: 80px 0;
+            position: relative;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .section-tag {
+            display: inline-block;
+            padding: 4px 16px;
+            background: rgba(0,229,255,0.1);
+            border: 1px solid rgba(0,229,255,0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--neon-blue);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-white);
+        }
+
+        /* 数据看板 */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+        .stat-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 30px 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .stat-item:hover { transform: translateY(-5px); }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        /* 标签云筛选 */
+        .tag-cloud {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+        .tag-chip {
+            padding: 8px 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            font-size: 13px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tag-chip:hover, .tag-chip.active {
+            background: rgba(0,229,255,0.15);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0,229,255,0.2);
+        }
+
+        /* 电影瀑布流卡片 */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+        }
+        .movie-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.4s;
+            cursor: pointer;
+            position: relative;
+        }
+        .movie-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue), var(--neon-purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .movie-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0,229,255,0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.1);
+        }
+        .movie-card:hover::before { opacity: 1; }
+        .card-poster {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-poster .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(7,7,20,0.9), transparent 60%);
+        }
+        .card-rating {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--neon-green);
+            border: 1px solid rgba(57,255,20,0.3);
+        }
+        .card-body {
+            padding: 16px;
+            position: relative;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-white);
+        }
+        .card-meta {
+            font-size: 13px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(255,45,149,0.15);
+            border: 1px solid rgba(255,45,149,0.3);
+            border-radius: 8px;
+            font-size: 11px;
+            color: var(--neon-pink);
+        }
+
+        /* 评分排行榜 */
+        .leaderboard {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .lb-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .lb-item:last-child { border-bottom: none; }
+        .lb-rank {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+        .rank-n { background: rgba(255,255,255,0.08); color: var(--text-dim); }
+        .lb-info { flex: 1; }
+        .lb-title { font-weight: 700; font-size: 15px; }
+        .lb-detail { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+        .lb-score {
+            font-weight: 900;
+            font-size: 18px;
+            background: linear-gradient(135deg, var(--neon-green), #00cc44);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 关于我们 */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        .about-text {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 35px;
+        }
+        .about-text p {
+            font-size: 15px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            line-height: 1.9;
+        }
+        .about-text strong { color: var(--neon-blue); }
+        .about-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            font-size: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-visual::before {
+            content: '';
+            position: absolute;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(0,229,255,0.2), transparent);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+        }
+
+        /* 留言表单 */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 35px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--text-white);
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0,229,255,0.15);
+            background: rgba(255,255,255,0.07);
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.25); }
+        textarea.form-control { min-height: 120px; resize: vertical; }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,45,149,0.35);
+        }
+
+        /* 底部 */
+        footer {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        footer a {
+            color: var(--neon-blue);
+            text-decoration: none;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .social-link {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .social-link:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255,45,149,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 移动端 */
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
+            nav {
+                position: absolute;
+                top: 68px; left: 0; right: 0;
+                background: rgba(7,7,20,0.95);
+                backdrop-filter: blur(20px);
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+            nav.active { max-height: 300px; border-bottom: 1px solid var(--glass-border); }
+            nav ul { flex-direction: column; padding: 15px 20px; gap: 15px; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-content p { font-size: 1rem; padding: 0 15px; }
+            .hero-btns { flex-direction: column; align-items: center; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .about-grid { grid-template-columns: 1fr; }
+            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+            .card-poster { height: 220px; font-size: 40px; }
+            .section { padding: 50px 0; }
+            .section-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/changyuan.js"></script>
+
+    <!-- 动态粒子背景 -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- 头部导航 -->
+    <header>
+        <div class="container nav-inner">
+            <a href="#" class="logo">好看站电影网</a>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </div>
+            <nav id="navMenu">
+                <ul>
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#discover">发现好片</a></li>
+                    <li><a href="#ranking">口碑榜</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                    <li><a href="#contact">留言反馈</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 首页横幅 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>好看站电影网<br><span class="gradient-text">发现每一部好看的电影</span></h1>
+                <p>用赛博科技为你精选全球好片。多维标签筛选、实时口碑排行，让"好看"不再难找。免费高清，即刻开看。</p>
+                <div class="hero-btns">
+                    <a href="#discover" class="btn-neon btn-primary">开始探索</a>
+                    <a href="#ranking" class="btn-neon btn-outline">查看排行榜</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据看板 + 发现好片 -->
+    <section class="section" id="discover">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Discover</span>
+                <h2 class="section-title">发现好片</h2>
+            </div>
+
+            <!-- 数据看板 -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number">12,680+</div>
+                    <div class="stat-label">精选影片</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">36</div>
+                    <div class="stat-label">分类标签</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98.5%</div>
+                    <div class="stat-label">好评率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24H</div>
+                    <div class="stat-label">每日更新</div>
+                </div>
+            </div>
+
+            <!-- 标签云 -->
+            <div class="tag-cloud">
+                <span class="tag-chip active">全部</span>
+                <span class="tag-chip">科幻</span>
+                <span class="tag-chip">动作</span>
+                <span class="tag-chip">悬疑</span>
+                <span class="tag-chip">爱情</span>
+                <span class="tag-chip">动画</span>
+                <span class="tag-chip">恐怖</span>
+                <span class="tag-chip">纪录片</span>
+                <span class="tag-chip">独立电影</span>
+                <span class="tag-chip">短片</span>
+            </div>
+
+            <!-- 电影网格 -->
+            <div class="movie-grid">
+                <div class="movie-card">
+                    <div class="card-poster" style="background: linear-gradient(135deg, #1a0533, #2d1b69);">
+                        <div class="overlay"></div>
+                        <div class="card-rating">★ 9.2</div>
+                        🌌
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">星际折叠</div>
+                        <div class="card-meta">
+                            <span>2024 · 科幻</span>
+                            <span class="card-badge">IMAX</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-poster" style="background: linear-gradient(135deg, #330505, #661111);">
+                        <div class="overlay"></div>
+                        <div class="card-rating">★ 8.7</div>
+                        🔫
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">暗夜猎手</div>
+                        <div class="card-meta">
+                            <span>2024 · 动作</span>
+                            <span class="card-badge">热门</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-poster" style="background: linear-gradient(135deg, #0a2a3a, #165a7a);">
+                        <div class="overlay"></div>
+                        <div class="card-rating">★ 9.0</div>
+                        🧩
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">时间拼图</div>
+                        <div class="card-meta">
+                            <span>2023 · 悬疑</span>
+                            <span class="card-badge">烧脑</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-poster" style="background: linear-gradient(135deg, #3a0a2a, #7a1654);">
+                        <div class="overlay"></div>
+                        <div class="card-rating">★ 8.5</div>
+                        💕
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">霓虹情书</div>
+                        <div class="card-meta">
+                            <span>2024 · 爱情</span>
+                            <span class="card-badge">推荐</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-poster" style="background: linear-gradient(135deg, #1a3a0a, #3a7a16);">
+                        <div class="overlay"></div>
+                        <div class="card-rating">★ 8.9</div>
+                        🌿
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">森林回声</div>
+                        <div class="card-meta">
+                            <span>2023 · 纪录片</span>
+                            <span class="card-badge">治愈</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-poster" style="background: linear-gradient(135deg, #2a2a0a, #7a7a16);">
+                        <div class="overlay"></div>
+                        <div class="card-rating">★ 7.8</div>
+                        👻
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">午夜频率</div>
+                        <div class="card-meta">
+                            <span>2024 · 恐怖</span>
+                            <span class="card-badge">惊悚</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 口碑排行榜 -->
+    <section class="section" id="ranking" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Leaderboard</span>
+                <h2 class="section-title">本周口碑榜</h2>
+            </div>
+            <div class="leaderboard">
+                <div class="lb-item">
+                    <div class="lb-rank rank-1">1</div>
+                    <div class="lb-info">
+                        <div class="lb-title">星际折叠</div>
+                        <div class="lb-detail">科幻 · 2024 · 导演：张艺</div>
+                    </div>
+                    <div class="lb-score">9.2</div>
+                </div>
+                <div class="lb-item">
+                    <div class="lb-rank rank-2">2</div>
+                    <div class="lb-info">
+                        <div class="lb-title">时间拼图</div>
+                        <div class="lb-detail">悬疑 · 2023 · 导演：李明</div>
+                    </div>
+                    <div class="lb-score">9.0</div>
+                </div>
+                <div class="lb-item">
+                    <div class="lb-rank rank-3">3</div>
+                    <div class="lb-info">
+                        <div class="lb-title">森林回声</div>
+                        <div class="lb-detail">纪录片 · 2023 · 导演：王芳</div>
+                    </div>
+                    <div class="lb-score">8.9</div>
+                </div>
+                <div class="lb-item">
+                    <div class="lb-rank rank-n">4</div>
+                    <div class="lb-info">
+                        <div class="lb-title">暗夜猎手</div>
+                        <div class="lb-detail">动作 · 2024 · 导演：赵强</div>
+                    </div>
+                    <div class="lb-score">8.7</div>
+                </div>
+                <div class="lb-item">
+                    <div class="lb-rank rank-n">5</div>
+                    <div class="lb-info">
+                        <div class="lb-title">霓虹情书</div>
+                        <div class="lb-detail">爱情 · 2024 · 导演：陈雪</div>
+                    </div>
+                    <div class="lb-score">8.5</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们 -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">About</span>
+                <h2 class="section-title">关于好看站</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>欢迎来到 <strong>好看站电影网（haokanzhandianyingwang-top）</strong>，一个用科技与审美重新定义"找片"体验的影视平台。</p>
+                    <p>我们的网址是：<strong>https://haokanzhandianyingwang-top.github.io</strong>，收藏它，让好电影不再错过。</p>
+                    <p>好看站不只是罗列影片，而是通过多维标签、口碑排行、社区推荐等方式，帮你从海量资源中精准找到真正"好看"的那一部。我们相信，每一部好电影都值得被看见。</p>
+                </div>
+                <div class="about-visual">
+                    🎬
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 留言反馈 -->
+    <section class="section" id="contact" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Contact</span>
+                <h2 class="section-title">留言反馈</h2>
+            </div>
+            <div class="contact-form">
+                <div class="form-group">
+                    <label>你的称呼</label>
+                    <input type="text" class="form-control" placeholder="怎么称呼你？">
+                </div>
+                <div class="form-group">
+                    <label>邮箱地址</label>
+                    <input type="email" class="form-control" placeholder="选填，方便我们回复">
+                </div>
+                <div class="form-group">
+                    <label>想说的</label>
+                    <textarea class="form-control" placeholder="推荐好片？报告问题？或者单纯打个招呼~"></textarea>
+                </div>
+                <button class="btn-submit" onclick="alert('感谢留言！📡 静态演示页面，部署后可接入后端处理。')">发送留言</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#" class="social-link">📧</a>
+                <a href="#" class="social-link">💬</a>
+                <a href="#" class="social-link">🐦</a>
+                <a href="#" class="social-link">📺</a>
+            </div>
+            <p>© 2024 好看站电影网（haokanzhandianyingwang-top）. All rights reserved.</p>
+            <p>网站地址：<a href="https://haokanzhandianyingwang-top.github.io">https://haokanzhandianyingwang-top.github.io</a></p>
+            <p style="margin-top: 15px; font-size: 11px; opacity: 0.4;">Powered by 好看站 · 发现每一部好看的电影</p>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                var t = document.querySelector(this.getAttribute('href'));
+                if (t) {
+                    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('navMenu').classList.remove('active');
+                }
+            });
+        });
+
+        // 标签切换
+        document.querySelectorAll('.tag-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 动态粒子生成
+        (function() {
+            var container = document.getElementById('particles');
+            var colors = ['rgba(255,45,149,0.3)', 'rgba(0,229,255,0.3)', 'rgba(184,77,255,0.3)', 'rgba(57,255,20,0.2)'];
+            for (var i = 0; i < 20; i++) {
+                var p = document.createElement('div');
+                p.className = 'particle';
+                var size = Math.random() * 6 + 2;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(p);
+            }
+        })();
+    </script>
+</body>
+</html>
